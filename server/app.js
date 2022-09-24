@@ -11,6 +11,6 @@ app.use(express.urlencoded({ extended: true }))
 app.use('/api/tarefas', tarefaRota);
 app.use('/api/projetos', projetoRota);
 
-app.listen(3000, () => {
+app.listen(8080, () => {
     console.log("Iniciando o servidor...")
 })

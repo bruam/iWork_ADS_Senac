@@ -4,7 +4,7 @@
   "description": "API iWork",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon app.js"
+    "start": "nodemon server/app.js"
   },
   "keywords": [],
   "author": "",
