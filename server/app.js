@@ -1,16 +1,29 @@
-const express = require('express')
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+
 const app = express()
 
+var corsOptions = {
+    origin: "http://localhost:8081"
+};
+
+app.use(cors(corsOptions));
+
 //recebe o recurso exportado (router)
-const tarefaRota = require('./routes/tarefa_rotas')
-const projetoRota = require('./routes/projeto_rotas')
+const taskRoute = require('./routes/tarefa_rotas')
+const projectRoute = require('./routes/projeto_rotas')
 
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true }))
 
-app.use('/api/tarefas', tarefaRota);
-app.use('/api/projetos', projetoRota);
+app.use('/api/tasks', taskRoute);
+app.use('/api/projects', projectRoute);
 
-app.listen(8080, () => {
-    console.log("Iniciando o servidor...")
+const db = require('./models')
+db.sequelize.sync();
+
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, () => {
+    console.log(`Iniciando o servidor na porta ${PORT}`)
 })

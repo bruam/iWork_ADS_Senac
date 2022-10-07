@@ -1,15 +1,13 @@
 const express = require('express');
 const router = express.Router();
 
-const controller = require('../controllers/projeto_controller')
+const controller = require('../controllers/project_controller')
 
-// encaminhada a partir de /api/produtos
+router.get('/', controller.findAll);
+router.get('/:id', controller.findOne);
+router.post('/', controller.create);
+router.put('/:id', controller.update);
+router.delete('/:id', controller.delete);
+router.delete('/', controller.deleteAll);
 
-router.get('/', controller.listar);
-router.get('/:id', controller.buscarPorId);
-router.post('/', controller.inserir);
-router.put('/:id', controller.atualizar);
-router.delete('/:id', controller.deletar);
-
-// exportando o recurso router
 module.exports = router;
