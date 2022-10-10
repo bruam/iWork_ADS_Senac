@@ -1,0 +1,7 @@
+// ---------- Configurações do banco de dados e migrations ----------
+
+const path = require("path");
+module.exports = {
+  config: path.resolve(__dirname, 'config', 'database.js'), //define caminho da configuração de banco de dados
+  'migrations-path': path.resolve(__dirname, 'database', 'migrations') //define caminho para as migrations
+}
