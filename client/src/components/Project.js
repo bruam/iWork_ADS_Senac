@@ -1,77 +1,57 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from "react-router-dom";
 import ProjectDataService from "../services/ProjectService";
-import Moment from 'moment';
 
-const Tutorial = props => {
-  const { id }= useParams();
+const Project = (props) => {
+  const { id } = useParams();
   let navigate = useNavigate();
 
   const initialProjectState = {
     id: null,
     title: "",
-    deadline: null
+    deadline: "",
   };
   const [currentProject, setCurrentProject] = useState(initialProjectState);
   const [message, setMessage] = useState("");
 
-  const getTutorial = id => {
+  const getProject = (id) => {
     ProjectDataService.get(id)
-      .then(response => {
-        setCurrentProject(response.data);
-        console.log(response.data);
+      .then((response) => {
+        setCurrentProject(response.data.project);
+        console.log(response.data.project);
       })
-      .catch(e => {
+      .catch((e) => {
         console.log(e);
       });
   };
 
   useEffect(() => {
-    if (id)
-      getTutorial(id);
+    if (id) getProject(id);
   }, [id]);
 
-  const handleInputChange = event => {
+  const handleInputChange = (event) => {
     const { name, value } = event.target;
     setCurrentProject({ ...currentProject, [name]: value });
   };
 
-  // const updatePublished = status => {
-  //   var data = {
-  //     id: currentProject.id,
-  //     title: currentProject.title,
-  //     description: currentProject.description,
-  //     published: status
-  //   };
-
-  //   ProjectDataService.update(currentProject.id, data)
-  //     .then(response => {
-  //       setCurrentProject({ ...currentProject, published: status });
-  //       console.log(response.data);
-  //     })
-  //     .catch(e => {
-  //       console.log(e);
-  //     });
-  // };
-
   const updateProject = () => {
     ProjectDataService.update(currentProject.id, currentProject)
-      .then(response => {
-        console.log(response.data);
-        setMessage("The tutorial was updated successfully!");
+      .then((response) => {
+        console.log(response.data.project);
+        setMessage("The Project was updated successfully!");
       })
-      .catch(e => {
+      .catch((e) => {
         console.log(e);
       });
   };
 
   const deleteProject = () => {
     ProjectDataService.delete(currentProject.id)
-      .then(response => {
-        console.log(response.data);
-        navigate("/tutorials");
+      .then((response) => {
+        console.log(response.data.project);
+        navigate("/projects");
       })
-      .catch(e => {
+      .catch((e) => {
         console.log(e);
       });
   };
@@ -99,15 +79,14 @@ const Tutorial = props => {
                 type="date"
                 className="form-control"
                 id="deadline"
-                name="deadline"                
-                value={Moment(currentProject.deadline).format('DD/MM/YYYY')}
+                name="deadline"
+                value={currentProject.deadline}
                 onChange={handleInputChange}
-                
               />
             </div>
           </form>
 
-          <button className="badge badge-danger mr-2" onClick={deleteProject}>
+          <button className="badge badge-danger me-2" onClick={deleteProject}>
             Deletar
           </button>
 
@@ -123,11 +102,11 @@ const Tutorial = props => {
       ) : (
         <div>
           <br />
-          <p>Por favor selecione um projeto...</p>
+          <p>Please click on a Project...</p>
         </div>
       )}
     </div>
   );
 };
 
-export default Tutorial;
+export default Project;

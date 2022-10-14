@@ -1,40 +1,37 @@
 import React, { useState } from "react";
 import ProjectDataService from "../services/ProjectService";
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
 
 const AddProject = () => {
   const initialProjectState = {
     id: null,
     title: "",
-    deadline: null
+    deadline: "",
   };
   const [project, setProject] = useState(initialProjectState);
   const [submitted, setSubmitted] = useState(false);
 
-  const handleInputChange = event => {
+  const handleInputChange = (event) => {
     const { name, value } = event.target;
-    console.log(name, value);
     setProject({ ...project, [name]: value });
   };
 
   const saveProject = () => {
     var data = {
       title: project.title,
-      deadline: project.deadline
+      deadline: project.deadline,
     };
 
     ProjectDataService.create(data)
-      .then(response => {
+      .then((response) => {
         setProject({
           id: response.data.id,
           title: response.data.title,
-          deadline: response.data.deadline
+          deadline: response.data.deadline,
         });
         setSubmitted(true);
         console.log(response.data);
       })
-      .catch(e => {
+      .catch((e) => {
         console.log(e);
       });
   };
@@ -48,9 +45,9 @@ const AddProject = () => {
     <div className="submit-form">
       {submitted ? (
         <div>
-          <h4>Projeto criado com sucesso!</h4>
+          <h4>You submitted successfully!</h4>
           <button className="btn btn-success" onClick={newProject}>
-            Adicionar
+            Add
           </button>
         </div>
       ) : (
@@ -69,7 +66,7 @@ const AddProject = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="deadline">Prazo</label>
+            <label htmlFor="deadline">Prazo estimado</label>
             <input
               type="date"
               className="form-control"
@@ -82,7 +79,7 @@ const AddProject = () => {
           </div>
 
           <button onClick={saveProject} className="btn btn-success">
-            Criar
+            Submit
           </button>
         </div>
       )}

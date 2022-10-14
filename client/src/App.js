@@ -1,46 +1,60 @@
-import React, { Component } from "react";
-import { Routes, Route } from "react-router-dom";
-import 'bootstrap/dist/css/bootstrap.min.css';
-import Container from 'react-bootstrap/Container';
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
-import NavDropdown from 'react-bootstrap/NavDropdown';
-import './App.css';
-import ProjectsList from './components/ProjectsList';
-import AddProject from './components/AddProject';
-import Project from './components/Project';
+import { Routes, Route, Link, useParams } from "react-router-dom";
+import NavBar from "./components/NavBar";
+import ProjectDataService from "./services/ProjectService";
+import "./App.css";
 
-class App extends Component {
-  render() {
-    return (
-      <div>
+import AddProject from "./components/AddProject";
+import Project from "./components/Project";
+import ProjectsList from "./components/ProjectsList";
+import NewProject from "./components/NewProject";
+import ListProject from "./components/ListProject";
+import { useEffect, useState } from "react";
 
-        <Navbar bg="light" expand="lg">
-          <Container>
-            <Navbar.Brand href="/projects">iWork</Navbar.Brand>
-            <Navbar.Toggle aria-controls="basic-navbar-nav" />
-            <Navbar.Collapse id="basic-navbar-nav">
-              <Nav className="me-auto">
-                <NavDropdown title="Projetos" id="basic-nav-dropdown">
-                  <NavDropdown.Item href={"/add"}>Adicionar</NavDropdown.Item>                  
-                </NavDropdown>
-              </Nav>
-            </Navbar.Collapse>
-          </Container>
-        </Navbar>
+function App() {
+  const [projects, setProjects] = useState([]);
 
-        <Container>
-          <Routes>
-            <Route path="/" element={<ProjectsList/>} />
-            <Route path="/projects" element={<ProjectsList/>} />
-            <Route path="/add" element={<AddProject/>} />
-            <Route path="/projects/:id" element={<Project/>} />
-          </Routes>
-        </Container>
+  useEffect(() => {
+    retrieveProjects();
+  }, []);
 
+  const retrieveProjects = () => {
+    ProjectDataService.getAll()
+      .then((response) => {
+        setProjects(response.data.projects);
+        console.log(response.data.projects);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
+  const deleteProject = (id) => {
+    ProjectDataService.delete(id)
+      .then((response) => {
+        console.log(response.data.projects);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
+  console.log(projects);
+
+  return (
+    <div>
+      <NavBar />
+      {/* <NewProject />
+      <ListProject projects={projects} deleteProject={deleteProject} /> */}
+      <div className="container mt-3">
+        <Routes>
+          <Route path="/" element={<ProjectsList />} />
+          <Route path="/projects" element={<ProjectsList />} />
+          <Route path="/add" element={<AddProject />} />
+          <Route path="/projects/:id" element={<Project />} />
+        </Routes>
       </div>
-    )      
-  }
+    </div>
+  );
 }
 
 export default App;
