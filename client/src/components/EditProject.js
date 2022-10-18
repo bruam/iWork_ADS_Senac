@@ -3,18 +3,15 @@ import ProjectDataService from "../services/ProjectService";
 import Button from "react-bootstrap/esm/Button";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
-import Container from "react-bootstrap/esm/Container";
 
-export default function NewProject({ id }) {
+export default function EditProject(props) {
   const initialProjectState = {
-    id: null,
-    title: "",
-    deadline: "",
+    title: props.project.title,
+    deadline: props.project.deadline,
   };
 
   const [show, setShow] = useState(false);
   const [project, setProject] = useState(initialProjectState);
-  const [submitted, setSubmitted] = useState(false);
   const [message, setMessage] = useState("");
 
   const handleClose = () => setShow(false);
@@ -25,59 +22,32 @@ export default function NewProject({ id }) {
     setProject({ ...project, [name]: value });
   };
 
-  const saveProject = () => {
-    var data = {
-      title: project.title,
-      deadline: project.deadline,
-    };
-
-    ProjectDataService.create(data)
-      .then((response) => {
-        setProject({
-          id: response.data.id,
-          title: response.data.title,
-          deadline: response.data.deadline,
-        });
-        setSubmitted(true);
-        handleClose();
-        // console.log(response.data.project);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
-
   const updateProject = () => {
-    var data = {
-      title: project.title,
-      deadline: project.deadline,
-    };
-
-    ProjectDataService.update(id, data)
+    ProjectDataService.update(props.project.id, project)
       .then((response) => {
-        // console.log(response.data);
+        console.log(response.data);
         setMessage("The Project was updated successfully!");
+        handleClose();
       })
       .catch((e) => {
         console.log(e);
       });
   };
 
-  const newProject = () => {
+  const editProject = () => {
     handleShow();
     setProject(initialProjectState);
-    setSubmitted(false);
   };
 
   // console.log(id);
   return (
-    <Container className="text-center mt-4 mb-5">
-      <Button variant="primary" onClick={newProject}>
-        Novo projeto
+    <>
+      <Button variant="outline-warning me-2 mb-1" onClick={() => editProject()}>
+        Editar
       </Button>
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Novo Projeto</Modal.Title>
+          <Modal.Title>Editar projeto</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>
@@ -86,7 +56,7 @@ export default function NewProject({ id }) {
               <Form.Control
                 name="title"
                 type="text"
-                placeholder="Título do seu projeto"
+                placeholder="Título da sua tarefa"
                 required
                 onChange={handleInputChange}
                 value={project.title}
@@ -98,7 +68,7 @@ export default function NewProject({ id }) {
               <Form.Control
                 name="deadline"
                 type="date"
-                placeholder="Prazo do seu projeto"
+                placeholder="Tempo estimado da tarefa"
                 required
                 onChange={handleInputChange}
                 value={project.deadline}
@@ -107,11 +77,11 @@ export default function NewProject({ id }) {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="primary" onClick={() => saveProject()}>
-            Criar
+          <Button variant="primary" onClick={() => updateProject()}>
+            Atualizar
           </Button>
         </Modal.Footer>
       </Modal>
-    </Container>
+    </>
   );
 }

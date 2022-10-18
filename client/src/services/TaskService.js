@@ -20,6 +20,10 @@ class TaskDataService {
   delete(id) {
     return http.delete(`/tasks/${id}`);
   }
+
+  getAllFromProject(id) {
+    return http.get(`/tasks/fromProject/${id}`);
+  }
 }
 
 export default new TaskDataService();

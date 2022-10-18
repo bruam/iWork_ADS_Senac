@@ -1,19 +1,23 @@
 import React, { useState } from "react";
-import ProjectDataService from "../services/ProjectService";
+import TaskDataService from "../services/TaskService";
 import Button from "react-bootstrap/esm/Button";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import Container from "react-bootstrap/esm/Container";
+import { useParams } from "react-router-dom";
 
-export default function NewProject({ id }) {
-  const initialProjectState = {
+export default function NewTask() {
+  const { id } = useParams();
+
+  const initialTaskState = {
     id: null,
     title: "",
-    deadline: "",
+    time: 0,
+    project_id: id,
   };
 
   const [show, setShow] = useState(false);
-  const [project, setProject] = useState(initialProjectState);
+  const [task, setTask] = useState(initialTaskState);
   const [submitted, setSubmitted] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -22,62 +26,48 @@ export default function NewProject({ id }) {
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    setProject({ ...project, [name]: value });
+    setTask({ ...task, [name]: value });
   };
 
-  const saveProject = () => {
+  const saveTask = () => {
     var data = {
-      title: project.title,
-      deadline: project.deadline,
+      title: task.title,
+      time: task.time,
+      project_id: id,
     };
 
-    ProjectDataService.create(data)
+    TaskDataService.create(data)
       .then((response) => {
-        setProject({
+        setTask({
           id: response.data.id,
           title: response.data.title,
-          deadline: response.data.deadline,
+          time: response.data.time,
+          project_id: id,
         });
         setSubmitted(true);
         handleClose();
-        // console.log(response.data.project);
+        // console.log(response.data.task);
       })
       .catch((e) => {
         console.log(e);
       });
   };
 
-  const updateProject = () => {
-    var data = {
-      title: project.title,
-      deadline: project.deadline,
-    };
-
-    ProjectDataService.update(id, data)
-      .then((response) => {
-        // console.log(response.data);
-        setMessage("The Project was updated successfully!");
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
-
-  const newProject = () => {
+  const newTask = () => {
     handleShow();
-    setProject(initialProjectState);
+    setTask(initialTaskState);
     setSubmitted(false);
   };
 
   // console.log(id);
   return (
-    <Container className="text-center mt-4 mb-5">
-      <Button variant="primary" onClick={newProject}>
-        Novo projeto
+    <Container className="ms-1 mt-3">
+      <Button variant="secondary" onClick={() => newTask()}>
+        Adicionar tarefa
       </Button>
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Novo Projeto</Modal.Title>
+          <Modal.Title>Nova tarefa</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>
@@ -86,28 +76,28 @@ export default function NewProject({ id }) {
               <Form.Control
                 name="title"
                 type="text"
-                placeholder="Título do seu projeto"
+                placeholder="Título da sua tarefa"
                 required
                 onChange={handleInputChange}
-                value={project.title}
+                value={task.title}
               />
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label>Prazo estimado</Form.Label>
+              <Form.Label>Tempo estimado (min)</Form.Label>
               <Form.Control
-                name="deadline"
-                type="date"
-                placeholder="Prazo do seu projeto"
+                name="time"
+                type="number"
+                placeholder="Tempo estimado da tarefa"
                 required
                 onChange={handleInputChange}
-                value={project.deadline}
+                value={task.time}
               />
             </Form.Group>
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="primary" onClick={() => saveProject()}>
+          <Button variant="primary" onClick={() => saveTask()}>
             Criar
           </Button>
         </Modal.Footer>
