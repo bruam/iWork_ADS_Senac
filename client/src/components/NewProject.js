@@ -4,21 +4,35 @@ import Button from "react-bootstrap/esm/Button";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import Container from "react-bootstrap/esm/Container";
+import { format } from "date-fns";
 
-export default function NewProject({ id }) {
+export default function NewProject({ callback }) {
   const initialProjectState = {
     id: null,
     title: "",
     deadline: "",
   };
 
+  const today = new Date();
+
   const [show, setShow] = useState(false);
   const [project, setProject] = useState(initialProjectState);
-  const [submitted, setSubmitted] = useState(false);
-  const [message, setMessage] = useState("");
+  const [validated, setValidated] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+
+  const handleSubmit = (event) => {
+    const form = event.currentTarget;
+    if (form.checkValidity() === false) {
+      event.preventDefault();
+      event.stopPropagation();
+    } else {
+      saveProject();
+    }
+
+    setValidated(true);
+  };
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -38,25 +52,8 @@ export default function NewProject({ id }) {
           title: response.data.title,
           deadline: response.data.deadline,
         });
-        setSubmitted(true);
+        callback(project);
         handleClose();
-        // console.log(response.data.project);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
-
-  const updateProject = () => {
-    var data = {
-      title: project.title,
-      deadline: project.deadline,
-    };
-
-    ProjectDataService.update(id, data)
-      .then((response) => {
-        // console.log(response.data);
-        setMessage("The Project was updated successfully!");
       })
       .catch((e) => {
         console.log(e);
@@ -66,10 +63,8 @@ export default function NewProject({ id }) {
   const newProject = () => {
     handleShow();
     setProject(initialProjectState);
-    setSubmitted(false);
   };
 
-  // console.log(id);
   return (
     <Container className="text-center mt-4 mb-5">
       <Button variant="primary" onClick={newProject}>
@@ -80,7 +75,7 @@ export default function NewProject({ id }) {
           <Modal.Title>Novo Projeto</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form>
+          <Form noValidate validated={validated} onSubmit={handleSubmit}>
             <Form.Group className="mb-3">
               <Form.Label>Título</Form.Label>
               <Form.Control
@@ -91,6 +86,9 @@ export default function NewProject({ id }) {
                 onChange={handleInputChange}
                 value={project.title}
               />
+              <Form.Control.Feedback type="invalid">
+                Título inválido!
+              </Form.Control.Feedback>
             </Form.Group>
 
             <Form.Group className="mb-3">
@@ -99,18 +97,20 @@ export default function NewProject({ id }) {
                 name="deadline"
                 type="date"
                 placeholder="Prazo do seu projeto"
+                min={format(today, "yyyy-MM-dd")}
                 required
                 onChange={handleInputChange}
                 value={project.deadline}
               />
+              <Form.Control.Feedback type="invalid">
+                Prazo inválido!
+              </Form.Control.Feedback>
             </Form.Group>
+            <Button type="submit" variant="primary">
+              Criar
+            </Button>
           </Form>
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="primary" onClick={() => saveProject()}>
-            Criar
-          </Button>
-        </Modal.Footer>
       </Modal>
     </Container>
   );

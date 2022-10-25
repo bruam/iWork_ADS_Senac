@@ -10,27 +10,20 @@ export default function ListTasks() {
   const { id } = useParams();
   const [tasks, setTasks] = useState([]);
   const [projectName, setProjectName] = useState([]);
+  const [newTask, setNewTask] = useState([]);
+  const [editedTask, setEditedTask] = useState([]);
+  const [deletedTask, setDeletedTask] = useState([]);
 
   useEffect(() => {
     handleProjectName(id);
     retrieveTasks(id);
-  }, [id]);
+  }, [id, newTask, editedTask, deletedTask]);
 
   const retrieveTasks = (id) => {
     TaskDataService.getAllFromProject(id)
       .then((response) => {
         setTasks(response.data.tasks);
         // console.log(response.data.tasks);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
-
-  const deleteTask = (id) => {
-    TaskDataService.delete(id)
-      .then((response) => {
-        console.log(response.data.tasks);
       })
       .catch((e) => {
         console.log(e);
@@ -48,13 +41,30 @@ export default function ListTasks() {
       });
   };
 
+  const handleNewCallback = (newTaskProp) => {
+    setNewTask(newTaskProp);
+  };
+
+  const handleEditedCallback = (editedTaskProp) => {
+    setEditedTask(editedTaskProp);
+  };
+
+  const handleDeletedCallback = (deletedTaskProp) => {
+    setDeletedTask(deletedTaskProp);
+  };
+
   return (
     <Container className="mt-3">
       <h2 className="mb-5">{projectName}</h2>
       {tasks.map((task) => (
-        <TaskCard key={task.id} task={task} deleteTask={deleteTask} />
+        <TaskCard
+          key={task.id}
+          task={task}
+          editedCallback={handleEditedCallback}
+          deletedCallback={handleDeletedCallback}
+        />
       ))}
-      <NewTask />
+      <NewTask newCallback={handleNewCallback} />
     </Container>
   );
 }

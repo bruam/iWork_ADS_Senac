@@ -6,7 +6,7 @@ import Form from "react-bootstrap/Form";
 import Container from "react-bootstrap/esm/Container";
 import { useParams } from "react-router-dom";
 
-export default function NewTask() {
+export default function NewTask({ newCallback }) {
   const { id } = useParams();
 
   const initialTaskState = {
@@ -18,11 +18,22 @@ export default function NewTask() {
 
   const [show, setShow] = useState(false);
   const [task, setTask] = useState(initialTaskState);
-  const [submitted, setSubmitted] = useState(false);
-  const [message, setMessage] = useState("");
+  const [validated, setValidated] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+
+  const handleSubmit = (event) => {
+    const form = event.currentTarget;
+    if (form.checkValidity() === false) {
+      event.preventDefault();
+      event.stopPropagation();
+    } else {
+      saveTask();
+    }
+
+    setValidated(true);
+  };
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -44,9 +55,8 @@ export default function NewTask() {
           time: response.data.time,
           project_id: id,
         });
-        setSubmitted(true);
+        newCallback(task);
         handleClose();
-        // console.log(response.data.task);
       })
       .catch((e) => {
         console.log(e);
@@ -56,10 +66,8 @@ export default function NewTask() {
   const newTask = () => {
     handleShow();
     setTask(initialTaskState);
-    setSubmitted(false);
   };
 
-  // console.log(id);
   return (
     <Container className="ms-1 mt-3">
       <Button variant="secondary" onClick={() => newTask()}>
@@ -70,7 +78,7 @@ export default function NewTask() {
           <Modal.Title>Nova tarefa</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form>
+          <Form noValidate validated={validated} onSubmit={handleSubmit}>
             <Form.Group className="mb-3">
               <Form.Label>Título</Form.Label>
               <Form.Control
@@ -81,6 +89,9 @@ export default function NewTask() {
                 onChange={handleInputChange}
                 value={task.title}
               />
+              <Form.Control.Feedback type="invalid">
+                Título inválido!
+              </Form.Control.Feedback>
             </Form.Group>
 
             <Form.Group className="mb-3">
@@ -90,17 +101,19 @@ export default function NewTask() {
                 type="number"
                 placeholder="Tempo estimado da tarefa"
                 required
+                min={1}
                 onChange={handleInputChange}
                 value={task.time}
               />
+              <Form.Control.Feedback type="invalid">
+                Tempo inválido!
+              </Form.Control.Feedback>
             </Form.Group>
+            <Button type="submit" variant="primary">
+              Criar
+            </Button>
           </Form>
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="primary" onClick={() => saveTask()}>
-            Criar
-          </Button>
-        </Modal.Footer>
       </Modal>
     </Container>
   );

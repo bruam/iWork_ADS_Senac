@@ -3,19 +3,34 @@ import ProjectDataService from "../services/ProjectService";
 import Button from "react-bootstrap/esm/Button";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
+import { format } from "date-fns";
 
-export default function EditProject(props) {
+export default function EditProject({ currentProject, callback }) {
   const initialProjectState = {
-    title: props.project.title,
-    deadline: props.project.deadline,
+    title: currentProject.title,
+    deadline: currentProject.deadline,
   };
+
+  const today = new Date();
 
   const [show, setShow] = useState(false);
   const [project, setProject] = useState(initialProjectState);
-  const [message, setMessage] = useState("");
+  const [validated, setValidated] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+
+  const handleSubmit = (event) => {
+    const form = event.currentTarget;
+    if (form.checkValidity() === false) {
+      event.preventDefault();
+      event.stopPropagation();
+    } else {
+      updateProject();
+    }
+
+    setValidated(true);
+  };
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -23,10 +38,10 @@ export default function EditProject(props) {
   };
 
   const updateProject = () => {
-    ProjectDataService.update(props.project.id, project)
+    ProjectDataService.update(currentProject.id, project)
       .then((response) => {
         console.log(response.data);
-        setMessage("The Project was updated successfully!");
+        callback(project);
         handleClose();
       })
       .catch((e) => {
@@ -50,7 +65,7 @@ export default function EditProject(props) {
           <Modal.Title>Editar projeto</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form>
+          <Form noValidate validated={validated} onSubmit={handleSubmit}>
             <Form.Group className="mb-3">
               <Form.Label>Título</Form.Label>
               <Form.Control
@@ -61,26 +76,32 @@ export default function EditProject(props) {
                 onChange={handleInputChange}
                 value={project.title}
               />
+              <Form.Control.Feedback type="invalid">
+                Título inválido!
+              </Form.Control.Feedback>
             </Form.Group>
 
             <Form.Group className="mb-3">
               <Form.Label>Prazo estimado</Form.Label>
               <Form.Control
+                as="input"
                 name="deadline"
                 type="date"
                 placeholder="Tempo estimado da tarefa"
+                min={format(today, "yyyy-MM-dd")}
                 required
                 onChange={handleInputChange}
                 value={project.deadline}
               />
+              <Form.Control.Feedback type="invalid">
+                Prazo inválido!
+              </Form.Control.Feedback>
             </Form.Group>
+            <Button type="submit" variant="primary">
+              Atualizar
+            </Button>
           </Form>
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="primary" onClick={() => updateProject()}>
-            Atualizar
-          </Button>
-        </Modal.Footer>
       </Modal>
     </>
   );

@@ -4,19 +4,31 @@ import Button from "react-bootstrap/esm/Button";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 
-export default function EditTask(props) {
+export default function EditTask({ currentTask, callback }) {
   const initialTaskState = {
-    title: props.task.title,
-    time: props.task.time,
-    project_id: props.task.project_id,
+    title: currentTask.title,
+    time: currentTask.time,
+    project_id: currentTask.project_id,
   };
 
   const [show, setShow] = useState(false);
   const [task, setTask] = useState(initialTaskState);
-  const [message, setMessage] = useState("");
+  const [validated, setValidated] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+
+  const handleSubmit = (event) => {
+    const form = event.currentTarget;
+    if (form.checkValidity() === false) {
+      event.preventDefault();
+      event.stopPropagation();
+    } else {
+      updateTask();
+    }
+
+    setValidated(true);
+  };
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -24,10 +36,10 @@ export default function EditTask(props) {
   };
 
   const updateTask = () => {
-    TaskDataService.update(props.task.id, task)
+    TaskDataService.update(currentTask.id, task)
       .then((response) => {
         console.log(response.data);
-        setMessage("The Task was updated successfully!");
+        callback(task);
         handleClose();
       })
       .catch((e) => {
@@ -51,7 +63,7 @@ export default function EditTask(props) {
           <Modal.Title>Editar tarefa</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form>
+          <Form noValidate validated={validated} onSubmit={handleSubmit}>
             <Form.Group className="mb-3">
               <Form.Label>Título</Form.Label>
               <Form.Control
@@ -62,6 +74,9 @@ export default function EditTask(props) {
                 onChange={handleInputChange}
                 value={task.title}
               />
+              <Form.Control.Feedback type="invalid">
+                Título inválido!
+              </Form.Control.Feedback>
             </Form.Group>
 
             <Form.Group className="mb-3">
@@ -71,17 +86,19 @@ export default function EditTask(props) {
                 type="number"
                 placeholder="Tempo estimado da tarefa"
                 required
+                min={1}
                 onChange={handleInputChange}
                 value={task.time}
               />
+              <Form.Control.Feedback type="invalid">
+                Tempo inválido!
+              </Form.Control.Feedback>
             </Form.Group>
+            <Button type="submit" variant="primary">
+              Atualizar
+            </Button>
           </Form>
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="primary" onClick={() => updateTask()}>
-            Atualizar
-          </Button>
-        </Modal.Footer>
       </Modal>
     </>
   );
