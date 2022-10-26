@@ -6,7 +6,7 @@ let tasks;
 module.exports = {
   async createProject(req, res) {
     try {
-      const { title, deadline } = req.body;
+      const { title, deadline, concluded } = req.body;
       // const currentDate = now();
       // if (deadline < currentDate) {
       //   console.log(deadline);
@@ -16,7 +16,7 @@ module.exports = {
       //   const project = await Project.create({ title, deadline });
       //   res.status(200).json({ project });
       // }
-      const project = await Project.create({ title, deadline });
+      const project = await Project.create({ title, deadline, concluded });
       res.status(201).json({ project });
     } catch (error) {
       res.status(500).json({ message: "Erro interno do servidor" });
@@ -26,12 +26,12 @@ module.exports = {
   async updateProject(req, res) {
     try {
       const { id } = req.params;
-      const { title, deadline } = req.body;
+      const { title, deadline, concluded } = req.body;
       const project = await Project.findOne({ where: { id } });
       if (!project) {
         res.status(404).json({ message: "Nenhum projeto encontrado!" });
       } else {
-        await Project.update({ title, deadline }, { where: { id } });
+        await Project.update({ title, deadline, concluded }, { where: { id } });
         const updatedProject = await Project.findOne({ where: { id } });
         res.status(200).json({ updatedProject });
       }

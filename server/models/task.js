@@ -7,6 +7,9 @@ class Task extends Model {
         title: DataTypes.STRING,
         time: DataTypes.INTEGER,
         project_id: DataTypes.INTEGER,
+        minutes_left: DataTypes.INTEGER,
+        seconds_left: DataTypes.INTEGER,
+        concluded: DataTypes.BOOLEAN,
       },
       {
         sequelize,

@@ -1,5 +1,4 @@
 const { Model, DataTypes } = require("sequelize");
-const Task = require("./task");
 
 class Project extends Model {
   static init(sequelize) {
@@ -7,6 +6,7 @@ class Project extends Model {
       {
         title: DataTypes.STRING,
         deadline: DataTypes.STRING,
+        concluded: DataTypes.BOOLEAN,
       },
       {
         sequelize,

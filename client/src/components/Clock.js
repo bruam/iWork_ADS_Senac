@@ -19,7 +19,7 @@ export default function Clock({ expiryTimestamp, started, paused }) {
   });
 
   useEffect(() => {
-    if (started === true) start();
+    if (started === true) resume();
     else pause();
   }, [started, paused]);
 

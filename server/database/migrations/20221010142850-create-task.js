@@ -1,4 +1,5 @@
 "use strict";
+const { DataTypes } = require("sequelize");
 
 module.exports = {
   up(queryInterface, Sequelize) {
@@ -27,6 +28,18 @@ module.exports = {
           },
           key: "id",
         },
+      },
+      minutes_left: {
+        type: Sequelize.INTEGER,
+        defaultValue: 0,
+      },
+      seconds_left: {
+        type: Sequelize.INTEGER,
+        defaultValue: 0,
+      },
+      concluded: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
       },
       created_at: {
         type: Sequelize.DATE,

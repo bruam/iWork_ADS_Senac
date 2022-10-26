@@ -3,7 +3,8 @@ const Task = require("../models/task");
 module.exports = {
   async createTask(req, res) {
     try {
-      const { title, time, project_id } = req.body;
+      const { title, time, project_id, minutes_left, seconds_left, concluded } =
+        req.body;
       // const currentDate = now();
       // if (deadline < currentDate) {
       //   console.log(deadline);
@@ -13,7 +14,14 @@ module.exports = {
       //   const project = await Project.create({ title, deadline });
       //   res.status(200).json({ project });
       // }
-      const task = await Task.create({ title, time, project_id });
+      const task = await Task.create({
+        title,
+        time,
+        project_id,
+        minutes_left,
+        seconds_left,
+        concluded,
+      });
       res.status(201).json({ task });
     } catch (error) {
       res.status(500).json({ message: "Erro interno do servidor" });
@@ -23,12 +31,15 @@ module.exports = {
   async updateTask(req, res) {
     try {
       const { id } = req.params;
-      const { title, time } = req.body;
+      const { title, time, minutes_left, seconds_left, concluded } = req.body;
       const task = await Task.findOne({ where: { id } });
       if (!task) {
         res.status(404).json({ message: "Nenhuma tarefa encontrada!" });
       } else {
-        await Task.update({ title, time }, { where: { id } });
+        await Task.update(
+          { title, time, minutes_left, seconds_left, concluded },
+          { where: { id } }
+        );
         const updatedTask = await Task.findOne({ where: { id } });
         res.status(200).json({ updatedTask });
       }

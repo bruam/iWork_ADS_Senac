@@ -14,12 +14,14 @@ app.use(cors(corsOptions));
 //recebe o recurso exportado (router)
 const taskRoute = require("./routes/taskRoutes");
 const projectRoute = require("./routes/projectRoutes");
+const maxScoreRoute = require("./routes/maxScoreRoutes");
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use("/api/tasks", taskRoute);
 app.use("/api/projects", projectRoute);
+app.use("/api/maxScore", maxScoreRoute);
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
