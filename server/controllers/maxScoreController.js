@@ -14,7 +14,7 @@ module.exports = {
   async updateMaxScore(req, res) {
     try {
       const { id } = req.params;
-      const { score } = req.body;
+      const { score, projects_done } = req.body;
       const maxScore = await MaxScore.findOne({ where: { id } });
       if (!maxScore) {
         res.status(404).json({ message: "Nenhuma pontuação encontrada!" });
@@ -32,7 +32,7 @@ module.exports = {
     try {
       const maxScores = await MaxScore.findAll();
       if (!maxScores) {
-        res.status(404).json({ message: "Não existe pontuação cadastra" });
+        res.status(404).json({ message: "Não existe pontuação cadastrada" });
       }
       res.status(200).json({ maxScores });
     } catch (error) {

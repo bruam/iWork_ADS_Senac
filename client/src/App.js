@@ -4,10 +4,26 @@ import "./App.css";
 import NewProject from "./components/NewProject";
 import ListProjects from "./components/ListProjects";
 import ListTasks from "./components/ListTasks";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import MaxScoreDataService from "./services/MaxScoreService";
 
 function App() {
   const [newProject, setNewProject] = useState([]);
+  const [maxScore, setMaxScore] = useState(0);
+
+  useEffect(() => {
+    retrieveMaxScore();
+  }, []);
+
+  const retrieveMaxScore = () => {
+    MaxScoreDataService.getAll()
+      .then((response) => {
+        setMaxScore(response.data.maxScores);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
 
   const handleCallback = (newProjectProp) => {
     setNewProject(newProjectProp);
@@ -15,7 +31,8 @@ function App() {
 
   return (
     <div>
-      <NavBar />
+      {/* Evita que componente seja renderizado sem conteúdo no state */}
+      {maxScore && <NavBar maxScore={maxScore[0]} />}
       <Routes>
         <Route
           path="/"
@@ -30,7 +47,7 @@ function App() {
           path="/task/:id"
           element={
             <>
-              <ListTasks />
+              <ListTasks maxScore={maxScore[0]} />
             </>
           }
         />

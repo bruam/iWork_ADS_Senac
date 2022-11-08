@@ -1,7 +1,13 @@
 import React, { useEffect } from "react";
 import { useTimer } from "react-timer-hook";
 
-export default function Clock({ expiryTimestamp, started, paused }) {
+export default function Clock({
+  expiryTimestamp,
+  started,
+  paused,
+  clockCallback,
+  concludeTask,
+}) {
   const {
     seconds,
     minutes,
@@ -15,12 +21,18 @@ export default function Clock({ expiryTimestamp, started, paused }) {
   } = useTimer({
     expiryTimestamp,
     autoStart: false,
-    onExpire: () => console.warn("onExpire called"),
+    onExpire: () => concludeTask(),
   });
 
   useEffect(() => {
-    if (started === true) resume();
-    else pause();
+    if (started === true) {
+      resume();
+    } else {
+      pause();
+      clockCallback(minutes, seconds);
+      console.log(minutes);
+      console.log(seconds);
+    }
   }, [started, paused]);
 
   return (

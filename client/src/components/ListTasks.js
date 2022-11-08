@@ -6,7 +6,7 @@ import TaskDataService from "../services/TaskService";
 import TaskCard from "./TaskCard";
 import NewTask from "./NewTask";
 
-export default function ListTasks() {
+export default function ListTasks({ maxScore }) {
   const { id } = useParams();
   const [tasks, setTasks] = useState([]);
   const [projectName, setProjectName] = useState([]);
@@ -33,7 +33,6 @@ export default function ListTasks() {
   const handleProjectName = (id) => {
     ProjectService.get(id)
       .then((response) => {
-        console.log(response.data.project.title);
         setProjectName(response.data.project.title);
       })
       .catch((e) => {
@@ -60,6 +59,7 @@ export default function ListTasks() {
         <TaskCard
           key={task.id}
           task={task}
+          maxScore={maxScore}
           editedCallback={handleEditedCallback}
           deletedCallback={handleDeletedCallback}
         />

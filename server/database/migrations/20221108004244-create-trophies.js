@@ -2,20 +2,28 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    return queryInterface.createTable("max_scores", {
+    return queryInterface.createTable("trophies", {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
         allowNull: false,
       },
-      score: {
+      title: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      description: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      goal: {
         type: Sequelize.INTEGER,
         defaultValue: 0,
       },
-      projects_done: {
-        type: Sequelize.INTEGER,
-        defaultValue: 0,
+      trophy_type: {
+        type: Sequelize.STRING,
+        defaultValue: "T",
       },
       created_at: {
         type: Sequelize.DATE,
@@ -29,6 +37,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    return queryInterface.dropTable("max_score");
+    return queryInterface.dropTable("trophies");
   },
 };
