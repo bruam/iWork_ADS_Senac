@@ -104,4 +104,15 @@ module.exports = {
       console.error(error);
     }
   },
+  async deleteAllTasks(req, res) {
+    try {
+      const { id } = req.params;
+      const tasks = await Task.findAll({ where: { project_id: id } });
+      await Task.destroy({ where: { project_id: id } });
+      res.status(200).json({ tasks });
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+      console.error(error);
+    }
+  },
 };

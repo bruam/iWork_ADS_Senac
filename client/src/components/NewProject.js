@@ -67,18 +67,19 @@ export default function NewProject({ callback }) {
 
   return (
     <Container className="text-center mt-4 mb-5">
-      <Button variant="primary" onClick={newProject}>
+      <Button className="primary-button-bg-color" onClick={newProject}>
         Novo projeto
       </Button>
       <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
+        <Modal.Header closeButton className="detail-bg-color">
           <Modal.Title>Novo Projeto</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body className="detail-bg-color">
           <Form noValidate validated={validated} onSubmit={handleSubmit}>
             <Form.Group className="mb-3">
               <Form.Label>Título</Form.Label>
               <Form.Control
+                className="secondary-bg-color"
                 name="title"
                 type="text"
                 placeholder="Título do seu projeto"
@@ -86,7 +87,10 @@ export default function NewProject({ callback }) {
                 onChange={handleInputChange}
                 value={project.title}
               />
-              <Form.Control.Feedback type="invalid">
+              <Form.Control.Feedback
+                className="warning-text-color"
+                type="invalid"
+              >
                 Título inválido!
               </Form.Control.Feedback>
             </Form.Group>
@@ -94,6 +98,7 @@ export default function NewProject({ callback }) {
             <Form.Group className="mb-3">
               <Form.Label>Prazo estimado</Form.Label>
               <Form.Control
+                className="secondary-bg-color"
                 name="deadline"
                 type="date"
                 placeholder="Prazo do seu projeto"
@@ -102,11 +107,14 @@ export default function NewProject({ callback }) {
                 onChange={handleInputChange}
                 value={project.deadline}
               />
-              <Form.Control.Feedback type="invalid">
+              <Form.Control.Feedback
+                className="warning-text-color"
+                type="invalid"
+              >
                 Prazo inválido!
               </Form.Control.Feedback>
             </Form.Group>
-            <Button type="submit" variant="primary">
+            <Button type="submit" className="primary-button-bg-color">
               Criar
             </Button>
           </Form>

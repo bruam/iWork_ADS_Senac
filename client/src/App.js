@@ -10,15 +10,17 @@ import MaxScoreDataService from "./services/MaxScoreService";
 function App() {
   const [newProject, setNewProject] = useState([]);
   const [maxScore, setMaxScore] = useState(0);
-
+  const [concluded, setConcluded] = useState(false);
+  const [concludedProject, setConcludedProject] = useState(false);
   useEffect(() => {
     retrieveMaxScore();
-  }, []);
+  }, [concluded, concludedProject]);
 
   const retrieveMaxScore = () => {
     MaxScoreDataService.getAll()
       .then((response) => {
         setMaxScore(response.data.maxScores);
+        console.log(response.data.maxScores);
       })
       .catch((e) => {
         console.log(e);
@@ -29,10 +31,24 @@ function App() {
     setNewProject(newProjectProp);
   };
 
+  const handleConcludedCallback = (concludedTaskProp) => {
+    setConcluded(concludedTaskProp);
+  };
+
+  const handleConcludedProjectCallback = (concludedProjectProp) => {
+    setConcludedProject(concludedProjectProp);
+  };
+
   return (
-    <div>
+    <div className="primary-bg-color" style={{ height: "1000px" }}>
       {/* Evita que componente seja renderizado sem conteúdo no state */}
-      {maxScore && <NavBar maxScore={maxScore[0]} />}
+      {maxScore && (
+        <NavBar
+          maxScore={maxScore[0]}
+          concluded={concluded}
+          concludedProject={concludedProject}
+        />
+      )}
       <Routes>
         <Route
           path="/"
@@ -47,7 +63,11 @@ function App() {
           path="/task/:id"
           element={
             <>
-              <ListTasks maxScore={maxScore[0]} />
+              <ListTasks
+                maxScore={maxScore[0]}
+                concludedCallback={handleConcludedCallback}
+                concludedProjectCallback={handleConcludedProjectCallback}
+              />
             </>
           }
         />

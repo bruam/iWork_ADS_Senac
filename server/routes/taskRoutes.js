@@ -9,5 +9,6 @@ router.get("/:id", controller.findTask);
 router.get("/fromProject/:id", controller.findAllTasksFromProject);
 router.put("/:id", controller.updateTask);
 router.delete("/:id", controller.deleteTask);
+router.delete("/deleteAll/:id", controller.deleteAllTasks);
 
 module.exports = router;

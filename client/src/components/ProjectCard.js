@@ -14,7 +14,6 @@ function ProjectCard({ project, deletedCallback, editedCallback }) {
   const navigate = useNavigate();
 
   const openProject = (id) => {
-    console.log(id);
     navigate(`/task/${id}`);
   };
 
@@ -23,10 +22,20 @@ function ProjectCard({ project, deletedCallback, editedCallback }) {
     return `${date[2]}/${date[1]}/${date[0]}`;
   };
 
+  const verifyTasks = (tasks) => {
+    let data = [];
+    tasks.map((task) => {
+      data.push(task.concluded);
+    });
+    return data.includes(false);
+  };
+
   const handleDeleteProject = (tasks) => {
-    if (tasks.length === 0) {
+    if (tasks.length === 0 || !verifyTasks(tasks)) {
+      deleteTasks(project.id);
       deleteProject(project.id);
     } else {
+      console.log(verifyTasks(tasks));
       setAlert(true);
     }
   };
@@ -42,11 +51,21 @@ function ProjectCard({ project, deletedCallback, editedCallback }) {
       });
   };
 
+  const deleteTasks = (id) => {
+    TaskDataService.deleteAllFromProject(id)
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
   const deleteProject = (id) => {
     ProjectDataService.delete(id)
       .then((response) => {
-        // console.log(response.data.project);
-        deletedCallback(response.project);
+        console.log(response.data.project);
+        deletedCallback(response.data.project);
       })
       .catch((e) => {
         console.log(e);
@@ -60,19 +79,29 @@ function ProjectCard({ project, deletedCallback, editedCallback }) {
 
   return (
     <>
-      <Card className="mb-2">
+      <Card
+        className={`mb-2 detail-bg-color ${
+          project.concluded === true ? "border-success" : ""
+        }`}
+      >
         <Card.Body>
           <Card.Title>{project.title}</Card.Title>
           <Card.Text>Prazo: {handleDateFormat(project.deadline)}</Card.Text>
-          <Button
-            variant="outline-success me-2 mb-1"
-            onClick={() => openProject(project.id)}
-          >
-            Continuar
-          </Button>
+          {project.concluded ? (
+            <Button variant="success me-2 mb-1" disabled>
+              Concluído
+            </Button>
+          ) : (
+            <Button
+              className="button-bg-color me-2 mb-1"
+              onClick={() => openProject(project.id)}
+            >
+              Continuar
+            </Button>
+          )}
           <EditProject currentProject={project} callback={handleEditProject} />
           <Button
-            variant="outline-danger"
+            variant="danger mb-1"
             onClick={() => retrieveTasks(project.id)}
           >
             Deletar
@@ -80,7 +109,7 @@ function ProjectCard({ project, deletedCallback, editedCallback }) {
         </Card.Body>
       </Card>
       {alert === true ? (
-        <Alert variant="primary" onClose={() => setAlert(false)} dismissible>
+        <Alert variant="warning" onClose={() => setAlert(false)} dismissible>
           Projeto contém tarefas não finalizadas!
         </Alert>
       ) : (

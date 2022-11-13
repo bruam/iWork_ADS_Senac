@@ -24,7 +24,10 @@ module.exports = {
       if (!trophy) {
         res.status(404).json({ message: "Nenhum troféu encontrado!" });
       } else {
-        await Trophy.update({ title, goal, trophy_type }, { where: { id } });
+        await Trophy.update(
+          { title, description, goal, trophy_type },
+          { where: { id } }
+        );
         const updatedTrophy = await Trophy.findOne({ where: { id } });
         res.status(200).json({ updatedTrophy });
       }

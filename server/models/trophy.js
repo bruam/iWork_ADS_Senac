@@ -8,6 +8,7 @@ class Trophy extends Model {
         description: DataTypes.STRING,
         goal: DataTypes.INTEGER,
         trophy_type: DataTypes.STRING,
+        concluded: DataTypes.BOOLEAN,
       },
       {
         sequelize,

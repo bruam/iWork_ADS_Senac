@@ -1,23 +1,21 @@
 import React, { useState } from "react";
-import TaskDataService from "../services/TaskService";
 import Button from "react-bootstrap/esm/Button";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import Container from "react-bootstrap/esm/Container";
-import { useParams } from "react-router-dom";
+import TrophyDataService from "../services/TrophyService";
 
-export default function NewTask({ newCallback }) {
-  const { id } = useParams();
-
-  const initialTaskState = {
+export default function NewTrophy({ callback }) {
+  const initialTrophyState = {
     id: null,
     title: "",
-    time: 0,
-    project_id: id,
+    description: "",
+    goal: 0,
+    trophy_type: "T",
   };
 
   const [show, setShow] = useState(false);
-  const [task, setTask] = useState(initialTaskState);
+  const [trophy, setTrophy] = useState(initialTrophyState);
   const [validated, setValidated] = useState(false);
 
   const handleClose = () => setShow(false);
@@ -29,7 +27,7 @@ export default function NewTask({ newCallback }) {
       event.preventDefault();
       event.stopPropagation();
     } else {
-      saveTask();
+      saveTrophy();
     }
 
     setValidated(true);
@@ -37,25 +35,27 @@ export default function NewTask({ newCallback }) {
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    setTask({ ...task, [name]: value });
+    setTrophy({ ...trophy, [name]: value });
   };
 
-  const saveTask = () => {
+  const saveTrophy = () => {
     var data = {
-      title: task.title,
-      time: task.time,
-      project_id: id,
+      title: trophy.title,
+      description: trophy.description,
+      goal: trophy.goal,
+      trophy_type: trophy.trophy_type,
     };
 
-    TaskDataService.create(data)
+    TrophyDataService.create(data)
       .then((response) => {
-        setTask({
+        setTrophy({
           id: response.data.id,
           title: response.data.title,
-          time: response.data.time,
-          project_id: id,
+          description: response.data.description,
+          goal: response.data.goal,
+          trophy_type: response.data.trophy_type,
         });
-        newCallback(task);
+        callback(trophy);
         handleClose();
       })
       .catch((e) => {
@@ -63,19 +63,19 @@ export default function NewTask({ newCallback }) {
       });
   };
 
-  const newTask = () => {
+  const newTrophy = () => {
     handleShow();
-    setTask(initialTaskState);
+    setTrophy(initialTrophyState);
   };
 
   return (
-    <Container className="ms-1 mt-3">
-      <Button className="primary-button-bg-color" onClick={() => newTask()}>
-        Adicionar Tarefa
+    <Container className="text-center mt-4 mb-5">
+      <Button className="primary-button-bg-color" onClick={newTrophy}>
+        Novo troféu
       </Button>
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton className="detail-bg-color">
-          <Modal.Title>Nova tarefa</Modal.Title>
+          <Modal.Title>Novo Troféu</Modal.Title>
         </Modal.Header>
         <Modal.Body className="detail-bg-color">
           <Form noValidate validated={validated} onSubmit={handleSubmit}>
@@ -85,10 +85,10 @@ export default function NewTask({ newCallback }) {
                 className="secondary-bg-color"
                 name="title"
                 type="text"
-                placeholder="Título da sua tarefa"
+                placeholder="Título do seu troféu"
                 required
                 onChange={handleInputChange}
-                value={task.title}
+                value={trophy.title}
               />
               <Form.Control.Feedback
                 className="warning-text-color"
@@ -99,24 +99,55 @@ export default function NewTask({ newCallback }) {
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label>Tempo estimado (min)</Form.Label>
+              <Form.Label>Descrição</Form.Label>
               <Form.Control
                 className="secondary-bg-color"
-                name="time"
-                type="number"
-                placeholder="Tempo estimado da tarefa"
-                required
-                min={1}
+                name="description"
+                type="textarea"
+                placeholder="Descrição do seu troféu"
                 onChange={handleInputChange}
-                value={task.time}
+                value={trophy.description}
               />
               <Form.Control.Feedback
                 className="warning-text-color"
                 type="invalid"
               >
-                Tempo inválido!
+                Descrição inválido!
               </Form.Control.Feedback>
             </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Meta</Form.Label>
+              <Form.Control
+                className="secondary-bg-color"
+                name="goal"
+                type="number"
+                placeholder="Valor da meta"
+                required
+                min={1}
+                onChange={handleInputChange}
+                value={trophy.goal}
+              />
+              <Form.Control.Feedback
+                className="warning-text-color"
+                type="invalid"
+              >
+                Meta inválida!
+              </Form.Control.Feedback>
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Tipo</Form.Label>
+              <Form.Select
+                className="secondary-bg-color mb-3"
+                name="trophy_type"
+                onChange={handleInputChange}
+              >
+                <option value="T">Pontuação alcançada</option>
+                <option value="P">Projetos concluídos</option>
+              </Form.Select>
+            </Form.Group>
+
             <Button type="submit" className="primary-button-bg-color">
               Criar
             </Button>

@@ -19,7 +19,7 @@ module.exports = {
       if (!maxScore) {
         res.status(404).json({ message: "Nenhuma pontuação encontrada!" });
       } else {
-        await MaxScore.update({ score }, { where: { id } });
+        await MaxScore.update({ score, projects_done }, { where: { id } });
         const updatedMaxScore = await MaxScore.findOne({ where: { id } });
         res.status(200).json({ updatedMaxScore });
       }

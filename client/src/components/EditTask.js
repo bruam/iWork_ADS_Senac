@@ -55,18 +55,19 @@ export default function EditTask({ currentTask, callback }) {
   // console.log(id);
   return (
     <>
-      <Button variant="outline-warning me-2 mb-1" onClick={() => editTask()}>
+      <Button variant="warning me-2 mb-1" onClick={() => editTask()}>
         Editar
       </Button>
       <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
+        <Modal.Header closeButton className="detail-bg-color">
           <Modal.Title>Editar tarefa</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body className="detail-bg-color">
           <Form noValidate validated={validated} onSubmit={handleSubmit}>
             <Form.Group className="mb-3">
               <Form.Label>Título</Form.Label>
               <Form.Control
+                className="secondary-bg-color"
                 name="title"
                 type="text"
                 placeholder="Título da sua tarefa"
@@ -74,7 +75,10 @@ export default function EditTask({ currentTask, callback }) {
                 onChange={handleInputChange}
                 value={task.title}
               />
-              <Form.Control.Feedback type="invalid">
+              <Form.Control.Feedback
+                className="warning-text-color"
+                type="invalid"
+              >
                 Título inválido!
               </Form.Control.Feedback>
             </Form.Group>
@@ -82,6 +86,7 @@ export default function EditTask({ currentTask, callback }) {
             <Form.Group className="mb-3">
               <Form.Label>Tempo estimado (min)</Form.Label>
               <Form.Control
+                className="secondary-bg-color"
                 name="time"
                 type="number"
                 placeholder="Tempo estimado da tarefa"
@@ -89,12 +94,16 @@ export default function EditTask({ currentTask, callback }) {
                 min={1}
                 onChange={handleInputChange}
                 value={task.time}
+                disabled
               />
-              <Form.Control.Feedback type="invalid">
+              <Form.Control.Feedback
+                className="warning-text-color"
+                type="invalid"
+              >
                 Tempo inválido!
               </Form.Control.Feedback>
             </Form.Group>
-            <Button type="submit" variant="primary">
+            <Button type="submit" className="primary-button-bg-color">
               Atualizar
             </Button>
           </Form>

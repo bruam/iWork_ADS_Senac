@@ -1,0 +1,11 @@
+.warning-text-color {color: #8f0007}
+.primary-bg-color {background-color: #282a36; color: #7f26fb}
+.secondary-bg-color {background-color: #44475a; border-color: #44475a; color: #bd93f9}
+.secondary-bg-color:focus {background-color: #44475a; color: #bd93f9}
+.secondary-bg-color:disabled {background-color: #4e4e4e; color: #706481}
+.detail-bg-color {background-color: #6272a4; border-color: #000000; color: #000000;}
+.button-bg-color {background-color: green; border-color: #6272a4;}
+.button-bg-color:hover {background-color: #068826; border-color: #6272a4;}
+.primary-button-bg-color {background-color: #7f26fb; border-color:#282a36}
+.primary-button-bg-color:hover {background-color: #9c5df5; border-color:#282a36}
+.primary-button-bg-color:focus {background-color: #7f26fb;}

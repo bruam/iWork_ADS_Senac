@@ -1,4 +1,5 @@
 "use strict";
+const { DataTypes } = require("sequelize");
 
 module.exports = {
   async up(queryInterface, Sequelize) {
@@ -24,6 +25,10 @@ module.exports = {
       trophy_type: {
         type: Sequelize.STRING,
         defaultValue: "T",
+      },
+      concluded: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
       },
       created_at: {
         type: Sequelize.DATE,

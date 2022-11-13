@@ -21,6 +21,10 @@ class TaskDataService {
     return http.delete(`/tasks/${id}`);
   }
 
+  deleteAllFromProject(id) {
+    return http.delete(`/tasks/deleteAll/${id}`);
+  }
+
   getAllFromProject(id) {
     return http.get(`/tasks/fromProject/${id}`);
   }
