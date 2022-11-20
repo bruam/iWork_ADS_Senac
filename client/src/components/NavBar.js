@@ -30,7 +30,9 @@ export default function NavBar({ maxScore, concluded, concludedProject }) {
           className="mb-3 secondary-bg-color"
         >
           <Container fluid>
-            <Navbar.Brand href="/">iWork</Navbar.Brand>
+            <Navbar.Brand href="/" style={{ color: "#7f26fb" }}>
+              iWork
+            </Navbar.Brand>
             <Nav>Pontuação: {maxScore.score}</Nav>
             <Nav>Projetos concluídos: {maxScore.projects_done}</Nav>
             <Navbar.Toggle aria-controls={`offcanvasNavbar-expand-${expand}`} />

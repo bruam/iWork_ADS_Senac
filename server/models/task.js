@@ -10,6 +10,7 @@ class Task extends Model {
         minutes_left: DataTypes.INTEGER,
         seconds_left: DataTypes.INTEGER,
         concluded: DataTypes.BOOLEAN,
+        user_id: DataTypes.INTEGER,
       },
       {
         sequelize,
@@ -21,6 +22,12 @@ class Task extends Model {
 Task.associate = (models) => {
   Task.belongsTo(models.Projects, {
     foreignKey: "project_id",
+  });
+};
+
+Task.associate = (models) => {
+  Task.belongsTo(models.User, {
+    foreignKey: "user_id",
   });
 };
 

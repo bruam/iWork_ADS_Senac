@@ -30,6 +30,17 @@ module.exports = {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
       },
+      user_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: {
+            tableName: "users",
+            schema: "public",
+          },
+          key: "id",
+        },
+      },
       created_at: {
         type: Sequelize.DATE,
         allowNull: false,

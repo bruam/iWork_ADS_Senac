@@ -7,6 +7,7 @@ class Project extends Model {
         title: DataTypes.STRING,
         deadline: DataTypes.STRING,
         concluded: DataTypes.BOOLEAN,
+        user_id: DataTypes.INTEGER,
       },
       {
         sequelize,
@@ -18,6 +19,12 @@ class Project extends Model {
 Project.associate = (models) => {
   Project.hasMany(models.Task, {
     foreignKey: "project_id",
+  });
+};
+
+Project.associate = (models) => {
+  Project.belongsTo(models.User, {
+    foreignKey: "user_id",
   });
 };
 

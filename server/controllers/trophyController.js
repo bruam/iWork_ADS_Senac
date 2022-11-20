@@ -3,12 +3,13 @@ const Trophy = require("../models/trophy");
 module.exports = {
   async createTrophy(req, res) {
     try {
-      const { title, description, goal, trophy_type } = req.body;
+      const { title, description, goal, trophy_type, user_id } = req.body;
       const trophy = await Trophy.create({
         title,
         description,
         goal,
         trophy_type,
+        user_id,
       });
       res.status(201).json({ trophy });
     } catch (error) {
@@ -19,13 +20,13 @@ module.exports = {
   async updateTrophy(req, res) {
     try {
       const { id } = req.params;
-      const { title, description, goal, trophy_type } = req.body;
+      const { title, description, goal, trophy_type, user_id } = req.body;
       const trophy = await Trophy.findOne({ where: { id } });
       if (!trophy) {
         res.status(404).json({ message: "Nenhum troféu encontrado!" });
       } else {
         await Trophy.update(
-          { title, description, goal, trophy_type },
+          { title, description, goal, trophy_type, user_id },
           { where: { id } }
         );
         const updatedTrophy = await Trophy.findOne({ where: { id } });
@@ -80,7 +81,7 @@ module.exports = {
   // async findAllTrophysFromProject(req, res) {
   //   try {
   //     const { id } = req.params;
-  //     const Trophys = await Trophy.findAll({ where: { trophy_type: id } });
+  //     const Trophys = await Trophy.findAll({ where: { trophy_type, user_id: id } });
   //     if (!Trophys) {
   //       res
   //         .status(404)

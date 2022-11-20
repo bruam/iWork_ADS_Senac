@@ -9,6 +9,7 @@ class Trophy extends Model {
         goal: DataTypes.INTEGER,
         trophy_type: DataTypes.STRING,
         concluded: DataTypes.BOOLEAN,
+        user_id: DataTypes.INTEGER,
       },
       {
         sequelize,
@@ -16,5 +17,11 @@ class Trophy extends Model {
     );
   }
 }
+
+Trophy.associate = (models) => {
+  Trophy.belongsTo(models.Users, {
+    foreignKey: "user_id",
+  });
+};
 
 module.exports = Trophy;

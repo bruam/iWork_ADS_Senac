@@ -6,6 +6,7 @@ class MaxScore extends Model {
       {
         score: DataTypes.INTEGER,
         projects_done: DataTypes.INTEGER,
+        user_id: DataTypes.INTEGER,
       },
       {
         sequelize,
@@ -13,5 +14,11 @@ class MaxScore extends Model {
     );
   }
 }
+
+MaxScore.associate = (models) => {
+  MaxScore.belongsTo(models.Users, {
+    foreignKey: "user_id",
+  });
+};
 
 module.exports = MaxScore;

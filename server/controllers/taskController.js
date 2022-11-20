@@ -3,8 +3,15 @@ const Task = require("../models/task");
 module.exports = {
   async createTask(req, res) {
     try {
-      const { title, time, project_id, minutes_left, seconds_left, concluded } =
-        req.body;
+      const {
+        title,
+        time,
+        project_id,
+        minutes_left,
+        seconds_left,
+        concluded,
+        user_id,
+      } = req.body;
       // const currentDate = now();
       // if (deadline < currentDate) {
       //   console.log(deadline);
@@ -21,6 +28,7 @@ module.exports = {
         minutes_left,
         seconds_left,
         concluded,
+        user_id,
       });
       res.status(201).json({ task });
     } catch (error) {
@@ -31,13 +39,14 @@ module.exports = {
   async updateTask(req, res) {
     try {
       const { id } = req.params;
-      const { title, time, minutes_left, seconds_left, concluded } = req.body;
+      const { title, time, minutes_left, seconds_left, concluded, user_id } =
+        req.body;
       const task = await Task.findOne({ where: { id } });
       if (!task) {
         res.status(404).json({ message: "Nenhuma tarefa encontrada!" });
       } else {
         await Task.update(
-          { title, time, minutes_left, seconds_left, concluded },
+          { title, time, minutes_left, seconds_left, concluded, user_id },
           { where: { id } }
         );
         const updatedTask = await Task.findOne({ where: { id } });

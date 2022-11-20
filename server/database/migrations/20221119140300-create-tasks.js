@@ -29,6 +29,17 @@ module.exports = {
           key: "id",
         },
       },
+      user_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: {
+            tableName: "users",
+            schema: "public",
+          },
+          key: "id",
+        },
+      },
       minutes_left: {
         type: Sequelize.INTEGER,
         defaultValue: 0,
@@ -53,6 +64,6 @@ module.exports = {
   },
 
   down(queryInterface, Sequelize) {
-    return queryInterface.dropTable("task");
+    return queryInterface.dropTable("tasks");
   },
 };

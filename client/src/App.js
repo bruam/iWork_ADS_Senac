@@ -6,12 +6,16 @@ import ListProjects from "./components/ListProjects";
 import ListTasks from "./components/ListTasks";
 import { useEffect, useState } from "react";
 import MaxScoreDataService from "./services/MaxScoreService";
+import NewUser from "./components/NewUser";
+import SignIn from "./components/SignIn";
 
 function App() {
   const [newProject, setNewProject] = useState([]);
   const [maxScore, setMaxScore] = useState(0);
   const [concluded, setConcluded] = useState(false);
   const [concludedProject, setConcludedProject] = useState(false);
+  const [token, setToken] = useState([]);
+
   useEffect(() => {
     retrieveMaxScore();
   }, [concluded, concludedProject]);
@@ -39,6 +43,10 @@ function App() {
     setConcludedProject(concludedProjectProp);
   };
 
+  const handleToken = (tokenProps) => {
+    setToken(tokenProps);
+  };
+
   return (
     <div className="primary-bg-color" style={{ height: "1000px" }}>
       {/* Evita que componente seja renderizado sem conteúdo no state */}
@@ -52,6 +60,15 @@ function App() {
       <Routes>
         <Route
           path="/"
+          element={
+            <>
+              <SignIn callback={handleToken} />
+              <NewUser />
+            </>
+          }
+        />
+        <Route
+          path="/logged"
           element={
             <>
               <NewProject callback={handleCallback} />
