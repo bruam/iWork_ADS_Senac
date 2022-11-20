@@ -4,6 +4,8 @@ import Button from "react-bootstrap/esm/Button";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import Container from "react-bootstrap/esm/Container";
+import { useNavigate } from "react-router-dom";
+import AuthService from "../services/AuthService";
 
 export default function SignIn({ callback }) {
   const initialUserState = {
@@ -12,16 +14,20 @@ export default function SignIn({ callback }) {
     password: "",
   };
 
+  let navigate = useNavigate();
+
   const [show, setShow] = useState(false);
   const [user, setUser] = useState(initialUserState);
   const [validated, setValidated] = useState(false);
   const [auth, setAuth] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
   const handleSubmit = (event) => {
     const form = event.currentTarget;
+    setLoading(true);
     if (form.checkValidity() === false) {
       event.preventDefault();
       event.stopPropagation();
@@ -50,6 +56,7 @@ export default function SignIn({ callback }) {
           token: response.data.token,
         });
         callback(auth);
+        console.log(auth);
         handleClose();
       })
       .catch((e) => {

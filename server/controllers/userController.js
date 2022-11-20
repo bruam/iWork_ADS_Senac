@@ -1,14 +1,20 @@
 const User = require("../models/user");
+const bcrypt = require("bcryptjs");
 
 module.exports = {
   async createUser(req, res) {
     try {
       const { email, password } = req.body;
-      const user = await User.create({
-        email,
-        password,
-      });
-      res.status(201).json({ user });
+      const user = await User.findOne({ where: { email: email } });
+      if (!user) {
+        const newUser = await User.create({
+          email: email,
+          password: bcrypt.hashSync(password, 8),
+        });
+        res.status(201).json({ newUser });
+      } else {
+        res.status(400).json({ message: "Email já está em uso!" });
+      }
     } catch (error) {
       res.status(500).json({ message: "Erro interno do servidor" });
       console.error(error);

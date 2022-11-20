@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import NavBar from "./components/NavBar";
+import NavBarUnlogged from "./components/NavBarUnlogged";
 import "./App.css";
 import NewProject from "./components/NewProject";
 import ListProjects from "./components/ListProjects";
@@ -8,6 +9,7 @@ import { useEffect, useState } from "react";
 import MaxScoreDataService from "./services/MaxScoreService";
 import NewUser from "./components/NewUser";
 import SignIn from "./components/SignIn";
+import Login from "./components/Login";
 
 function App() {
   const [newProject, setNewProject] = useState([]);
@@ -18,7 +20,8 @@ function App() {
 
   useEffect(() => {
     retrieveMaxScore();
-  }, [concluded, concludedProject]);
+    console.log(token);
+  }, [concluded, concludedProject, token]);
 
   const retrieveMaxScore = () => {
     MaxScoreDataService.getAll()
@@ -44,33 +47,35 @@ function App() {
   };
 
   const handleToken = (tokenProps) => {
+    console.log(tokenProps);
     setToken(tokenProps);
   };
 
   return (
     <div className="primary-bg-color" style={{ height: "1000px" }}>
-      {/* Evita que componente seja renderizado sem conteúdo no state */}
-      {maxScore && (
-        <NavBar
-          maxScore={maxScore[0]}
-          concluded={concluded}
-          concludedProject={concludedProject}
-        />
-      )}
       <Routes>
         <Route
           path="/"
           element={
             <>
-              <SignIn callback={handleToken} />
+              <NavBarUnlogged />
+              <Login callback={handleToken} />
               <NewUser />
             </>
           }
         />
         <Route
-          path="/logged"
+          path="/"
           element={
             <>
+              {/* Evita que componente seja renderizado sem conteúdo no state */}
+              {maxScore && (
+                <NavBar
+                  maxScore={maxScore[0]}
+                  concluded={concluded}
+                  concludedProject={concludedProject}
+                />
+              )}
               <NewProject callback={handleCallback} />
               <ListProjects newProject={newProject} />
             </>
@@ -80,6 +85,14 @@ function App() {
           path="/task/:id"
           element={
             <>
+              {/* Evita que componente seja renderizado sem conteúdo no state */}
+              {maxScore && (
+                <NavBar
+                  maxScore={maxScore[0]}
+                  concluded={concluded}
+                  concludedProject={concludedProject}
+                />
+              )}
               <ListTasks
                 maxScore={maxScore[0]}
                 concludedCallback={handleConcludedCallback}
