@@ -9,7 +9,6 @@ import { useEffect, useState } from "react";
 import MaxScoreDataService from "./services/MaxScoreService";
 import NewUser from "./components/NewUser";
 import SignIn from "./components/SignIn";
-import Login from "./components/Login";
 
 function App() {
   const [newProject, setNewProject] = useState([]);
@@ -59,7 +58,7 @@ function App() {
           element={
             <>
               <NavBarUnlogged />
-              <Login callback={handleToken} />
+              <SignIn callback={handleToken} />
               <NewUser />
             </>
           }
