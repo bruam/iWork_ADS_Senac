@@ -30,7 +30,7 @@ export default function ListTasks({
     handleProjectName(id);
     retrieveTasks(id);
     concludedCallback(concluded);
-  }, [id, newTask, editedTask, deletedTask, concluded, tasks]);
+  }, [id, newTask, editedTask, deletedTask, concluded]);
 
   const retrieveTasks = (id) => {
     TaskDataService.getAllFromProject(id)
