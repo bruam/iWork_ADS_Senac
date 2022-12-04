@@ -1,5 +1,6 @@
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
+const Project = require("../models/project");
 
 module.exports = {
   async createUser(req, res) {
@@ -52,12 +53,19 @@ module.exports = {
   async deleteUser(req, res) {
     try {
       const { id } = req.params;
+      const projects = await Project.findAll({ where: { user_id: id } });
       const user = await User.findOne({ where: { id } });
-      if (!user) {
-        res.status(404).json({ message: "Usuário não encontrado" });
+      if (!projects) {
+        if (!user) {
+          res.status(404).json({ message: "Usuário não encontrado" });
+        } else {
+          await User.destroy({ where: { id } });
+          res.status(200).json({ user });
+        }
       } else {
-        await User.destroy({ where: { id } });
-        res.status(200).json({ user });
+        res
+          .status(405)
+          .json({ message: "Usuário possui projetos cadastrados!" });
       }
     } catch (error) {
       res.status(500).json({ message: "Erro interno do servidor" });

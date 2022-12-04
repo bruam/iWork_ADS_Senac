@@ -1,17 +1,24 @@
 const Trophy = require("../models/trophy");
+const jwt = require("jsonwebtoken");
+const User = require("../models/user");
 
 module.exports = {
   async createTrophy(req, res) {
     try {
       const { title, description, goal, trophy_type, user_id } = req.body;
-      const trophy = await Trophy.create({
-        title,
-        description,
-        goal,
-        trophy_type,
-        user_id,
-      });
-      res.status(201).json({ trophy });
+      const user = await User.findOne({ where: user_id });
+      if (!user) {
+        res.status(400).json({ message: "Código de usuário inexistente" });
+      } else {
+        const trophy = await Trophy.create({
+          title,
+          description,
+          goal,
+          trophy_type,
+          user_id,
+        });
+        res.status(201).json({ trophy });
+      }
     } catch (error) {
       res.status(500).json({ message: "Erro interno do servidor" });
       console.error(error);
@@ -39,11 +46,16 @@ module.exports = {
   },
   async listTrophies(req, res) {
     try {
-      const trophies = await Trophy.findAll();
-      if (!trophies) {
+      const authHeader = req.headers["authorization"];
+      const token = authHeader && authHeader.split(" ")[1];
+      let payload = jwt.decode(token);
+      let userId = payload.id;
+      const trophies = await Trophy.findAll({ where: { user_id: userId } });
+      if (trophies.length === 0) {
         res.status(404).json({ message: "Não existe troféu cadastrado" });
+      } else {
+        res.status(200).json({ trophies });
       }
-      res.status(200).json({ trophies });
     } catch (error) {
       res.status(500).json({ message: "Erro interno do servidor" });
       console.error(error);
@@ -78,19 +90,4 @@ module.exports = {
       console.error(error);
     }
   },
-  // async findAllTrophysFromProject(req, res) {
-  //   try {
-  //     const { id } = req.params;
-  //     const Trophys = await Trophy.findAll({ where: { trophy_type, user_id: id } });
-  //     if (!Trophys) {
-  //       res
-  //         .status(404)
-  //         .json({ message: "Não existem tarefas cadastras para esse projeto" });
-  //     }
-  //     res.status(200).json({ Trophys });
-  //   } catch (error) {
-  //     res.status(500).json({ message: "Erro interno do servidor" });
-  //     console.error(error);
-  //   }
-  // },
 };

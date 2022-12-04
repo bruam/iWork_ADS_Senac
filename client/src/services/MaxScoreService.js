@@ -2,11 +2,11 @@ import http from "../http-common";
 
 class MaxScoreDataService {
   getAll() {
-    return http.get("/maxScore");
+    return http.get("/maxScore", localStorage.getItem("token"));
   }
 
   get(id) {
-    return http.get(`/maxScore/${id}`);
+    return http.get(`/maxScore/${id}`, localStorage.getItem("token"));
   }
 
   create(data) {

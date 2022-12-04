@@ -1,4 +1,7 @@
 const Task = require("../models/task");
+const jwt = require("jsonwebtoken");
+const Project = require("../models/project");
+const User = require("../models/user");
 
 module.exports = {
   async createTask(req, res) {
@@ -12,25 +15,26 @@ module.exports = {
         concluded,
         user_id,
       } = req.body;
-      // const currentDate = now();
-      // if (deadline < currentDate) {
-      //   console.log(deadline);
-      //   console.log(currentDate);
-      //   res.status(400).json({ message: "Prazo inválido!" });
-      // } else {
-      //   const project = await Project.create({ title, deadline });
-      //   res.status(200).json({ project });
-      // }
-      const task = await Task.create({
-        title,
-        time,
-        project_id,
-        minutes_left,
-        seconds_left,
-        concluded,
-        user_id,
-      });
-      res.status(201).json({ task });
+      const user = await User.findOne({ where: user_id });
+      const project = await Project.findOne({ where: project_id });
+      if (!user) {
+        res.status(400).json({ message: "Código de usuário inexistente" });
+      } else {
+        if (!project) {
+          res.status(400).json({ message: "Código de projeto inexistente" });
+        } else {
+          const task = await Task.create({
+            title,
+            time,
+            project_id,
+            minutes_left,
+            seconds_left,
+            concluded,
+            user_id,
+          });
+          res.status(201).json({ task });
+        }
+      }
     } catch (error) {
       res.status(500).json({ message: "Erro interno do servidor" });
       console.error(error);
@@ -59,7 +63,11 @@ module.exports = {
   },
   async listTasks(req, res) {
     try {
-      const tasks = await Task.findAll();
+      const authHeader = req.headers["authorization"];
+      const token = authHeader && authHeader.split(" ")[1];
+      let payload = jwt.decode(token);
+      let userId = payload.id;
+      const tasks = await Task.findAll({ where: { user_id: userId } });
       if (!tasks) {
         res.status(404).json({ message: "Não existem tarefas cadastras" });
       }
@@ -102,12 +110,13 @@ module.exports = {
     try {
       const { id } = req.params;
       const tasks = await Task.findAll({ where: { project_id: id } });
-      if (!tasks) {
+      if (tasks.length === 0) {
         res
           .status(404)
           .json({ message: "Não existem tarefas cadastras para esse projeto" });
+      } else {
+        res.status(200).json({ tasks });
       }
-      res.status(200).json({ tasks });
     } catch (error) {
       res.status(500).json({ message: "Erro interno do servidor" });
       console.error(error);

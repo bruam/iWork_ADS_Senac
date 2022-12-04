@@ -5,7 +5,9 @@ const User = require("../models/user");
 
 module.exports = {
   verifyJWT(req, res, next) {
-    const token = req.headers["x-access-token"];
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
+    console.log(token);
     if (!token)
       return res
         .status(403)
@@ -27,15 +29,22 @@ module.exports = {
       const { email, password } = req.body;
       //esse teste abaixo deve ser feito no seu banco de dados
       const user = await User.findOne({ where: { email } });
-      if (email == user.email && bcrypt.compareSync(password, user.password)) {
-        //auth ok
-        const id = user.id; //esse id viria do banco de dados
-        const token = jwt.sign({ id }, process.env.SECRET, {
-          expiresIn: 86400, // expires in 24 hours
-        });
-        return res.json({ auth: true, token: token });
+      if (!user) {
+        res.status(404).json({ message: "Email inexistente!" });
+      } else {
+        if (
+          email == user.email &&
+          bcrypt.compareSync(password, user.password)
+        ) {
+          //auth ok
+          const id = user.id; //esse id viria do banco de dados
+          const token = jwt.sign({ id }, process.env.SECRET, {
+            expiresIn: 86400, // expires in 24 hours
+          });
+          return res.json({ auth: true, token: token, userId: id });
+        }
+        res.status(401).json({ message: "Login inválido!" });
       }
-      res.status(500).json({ message: "Login inválido!" });
     } catch (error) {
       console.log(error);
     }

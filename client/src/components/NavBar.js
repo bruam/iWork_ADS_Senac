@@ -6,9 +6,18 @@ import Nav from "react-bootstrap/Nav";
 import ListTrophies from "./ListTrophies";
 import MaxScoreDataService from "../services/MaxScoreService";
 
+import { getScores } from "../http-common";
+
 export default function NavBar({ maxScore, concluded, concludedProject }) {
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    retrieveMaxScore();
+    (async () => {
+      const response = await getScores();
+      getScores(response.data.score);
+      setLoading(false);
+    })();
+    // retrieveMaxScore();
   }, [concluded, concludedProject]);
 
   const retrieveMaxScore = () => {
@@ -20,6 +29,10 @@ export default function NavBar({ maxScore, concluded, concludedProject }) {
         console.log(e);
       });
   };
+
+  if (loading) {
+    return <div className="loading">Carregando dados...</div>;
+  }
 
   return (
     <>
